@@ -21,10 +21,17 @@ public class Main {
                 .flatMap(channel -> channel.createMessage("Bot is up and ready!"))
                 .subscribe();
 
+//        client.getEventDispatcher().on(MessageCreateEvent.class)
+//                .map(MessageCreateEvent::getMessage)
+//                .filterWhen(message -> message.getAuthor().map(u -> !u.isBot()))
+//                .flatMap(message -> message.getChannel().flatMap(messageChannel -> messageChannel.createMessage(message.getContent().orElse("Potato"))))
+//                .subscribe();
+
         client.getEventDispatcher().on(MessageCreateEvent.class)
                 .map(MessageCreateEvent::getMessage)
-                .flatMap(Message::getChannel)
-                .flatMap(messageChannel -> messageChannel.createMessage("The User's Original Message"))
+                .filterWhen(message -> message.getAuthor().map(u -> !u.isBot()))
+                .map(message -> message.getContent().orElse(null))
+                .filter(message -> message.charAt(0)=='!')
                 .subscribe();
 
         // Starts up Bot
